@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Highlighter</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Text Highlighter</h1>
+
+      <div class="controls">
+        <div class="highlight-controls">
+          <h2>Highlight Options</h2>
+          <div class="color-picker">
+            <label for="highlight-color">Highlight Color:</label>
+            <input type="color" id="highlight-color" value="#FFFF00" />
+          </div>
+
+          <div class="opacity-control">
+            <label for="highlight-opacity"
+              >Opacity: <span id="opacity-value">50%</span></label
+            >
+            <input
+              type="range"
+              id="highlight-opacity"
+              min="10"
+              max="100"
+              value="50"
+            />
+          </div>
+
+          <div class="selection-mode">
+            <label>Selection Mode:</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  name="selection-mode"
+                  value="element"
+                  checked
+                />
+                Element Mode
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="selection-mode" value="text" />
+                Text Mode
+              </label>
+            </div>
+          </div>
+
+          <div class="buttons">
+            <button id="start-highlighting" class="primary-btn">
+              Start Highlighting
+            </button>
+            <button id="clear-highlights" class="secondary-btn">
+              Clear All Highlights
+            </button>
+          </div>
+        </div>
+
+        <div class="screenshot-controls">
+          <h2>Screenshot</h2>
+          <p>
+            After highlighting, use your system's screenshot tool or browser
+            extension to capture the screen.
+          </p>
+          <div class="tips">
+            <p><strong>Keyboard shortcuts:</strong></p>
+            <ul>
+              <li>Windows: <kbd>Win</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd></li>
+              <li>Mac: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>4</kbd></li>
+              <li>Toggle Mode: <kbd>Tab</kbd></li>
+              <li>Exit: <kbd>Esc</kbd></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>Click outside this popup to use the highlighter</p>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+.text-highlighter-highlight {
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+#highlight-mode-indicator {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  z-index: 9999;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  pointer-events: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.text-highlighter-input-wrapper {
+  display: inline-block;
+  position: relative;
+  padding: 2px;
+  border-radius: 2px;
+}
+
+/* Style for placeholder text */
+.text-highlighter-highlight input::placeholder,
+.text-highlighter-highlight textarea::placeholder {
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
