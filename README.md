@@ -15,12 +15,6 @@ A Chrome extension that allows users to highlight text on webpages before taking
 
 ## Installation
 
-### From Chrome Web Store (Coming Soon)
-
-1. Visit the Chrome Web Store
-2. Search for "Text Highlighter for Screenshots"
-3. Click "Add to Chrome"
-
 ### Manual Installation (Developer Mode)
 
 1. Download or clone this repository
@@ -49,17 +43,7 @@ A Chrome extension that allows users to highlight text on webpages before taking
 - **ESC**: Exit highlighting mode
 - **TAB**: Toggle between Element and Text selection modes
 - **Windows Screenshot**: Win + Shift + S
-- **Mac Screenshot**: Cmd + Shift + 4
-
-## Creating Icons
-
-Before using this extension, you'll need to create or download icon files:
-
-- icon16.png (16x16 pixels)
-- icon48.png (48x48 pixels)
-- icon128.png (128x128 pixels)
-
-Place these files in the `icons` directory.
+- **Mac Screenshot**: Cmd + Shift + 4/5
 
 ## License
 
