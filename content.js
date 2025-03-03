@@ -37,12 +37,33 @@ function enableHighlightingMode() {
   document.addEventListener("mouseup", handleMouseUp, true);
   document.addEventListener("click", handleClick, true); // Capture phase to prevent link navigation
 
-  // Disable all other mouse events
-  disableAllMouseEvents();
+  // Disable mouse events only in element mode
+  if (selectionMode === "element") {
+    disableAllMouseEvents();
+  } else {
+    // In text mode, we only need to prevent link navigation and default actions
+    document.addEventListener("click", preventDefaultForLinks, true);
+  }
 
   // Add selection change listener for text selection mode
   if (selectionMode === "text") {
     document.addEventListener("selectionchange", handleSelectionChange);
+  }
+}
+
+// Prevent default for links but allow text selection
+function preventDefaultForLinks(e) {
+  if (!isHighlightingMode) return;
+
+  // Check if the target is a link or inside a link
+  let currentElement = e.target;
+  while (currentElement) {
+    if (currentElement.tagName === "A") {
+      e.preventDefault();
+      e.stopPropagation();
+      break;
+    }
+    currentElement = currentElement.parentElement;
   }
 }
 
@@ -64,7 +85,7 @@ function disableAllMouseEvents() {
 
   // Create a handler for all events
   const preventDefaultHandler = function (e) {
-    if (isHighlightingMode) {
+    if (isHighlightingMode && selectionMode === "element") {
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
@@ -164,13 +185,24 @@ function restoreInlineEventHandlers() {
 function handleClick(e) {
   if (!isHighlightingMode) return;
 
-  // Prevent default behavior for all clicks in highlighting mode
-  e.preventDefault();
-  e.stopPropagation();
-  e.stopImmediatePropagation();
-
-  // Don't do anything else here, let mouseup handle the highlighting
-  return false;
+  if (selectionMode === "element") {
+    // In element mode, prevent all default behaviors
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    return false;
+  } else {
+    // In text mode, only prevent navigation for links
+    let currentElement = e.target;
+    while (currentElement) {
+      if (currentElement.tagName === "A") {
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+      }
+      currentElement = currentElement.parentElement;
+    }
+  }
 }
 
 // Handle selection change events
@@ -183,28 +215,38 @@ function handleSelectionChange() {
 function handleMouseUp(e) {
   if (!isHighlightingMode) return;
 
-  // Prevent default behavior
-  e.preventDefault();
-  e.stopPropagation();
-  e.stopImmediatePropagation();
+  if (selectionMode === "element") {
+    // In element mode, prevent default behavior
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
 
-  if (selectionMode === "text") {
-    const selection = window.getSelection();
-    if (selection.toString().trim() === "") return;
-
-    highlightTextSelection(selection);
-  } else {
-    // Element mode
+    // Apply highlight to the element
     const target = e.target;
 
     // Don't highlight the indicator itself
     if (target.id === "highlight-mode-indicator") return;
 
-    // Apply highlight to the element
     highlightElement(target);
-  }
+    return false;
+  } else {
+    // In text mode, allow selection but handle highlighting
+    const selection = window.getSelection();
+    if (selection.toString().trim() === "") return;
 
-  return false;
+    // Prevent default only for links
+    let currentElement = e.target;
+    while (currentElement) {
+      if (currentElement.tagName === "A") {
+        e.preventDefault();
+        e.stopPropagation();
+        break;
+      }
+      currentElement = currentElement.parentElement;
+    }
+
+    highlightTextSelection(selection);
+  }
 }
 
 // Highlight text selection
@@ -285,6 +327,31 @@ function handleKeyDown(e) {
     e.preventDefault();
     selectionMode = selectionMode === "element" ? "text" : "element";
 
+    // Update event handlers based on the new mode
+    if (selectionMode === "element") {
+      disableAllMouseEvents();
+      document.removeEventListener("selectionchange", handleSelectionChange);
+    } else {
+      // Remove all the event handlers we added for element mode
+      Object.keys(originalEventListeners).forEach((eventType) => {
+        originalEventListeners[eventType].forEach((handler) => {
+          document.removeEventListener(eventType, handler, true);
+        });
+      });
+
+      // Clear the stored handlers
+      originalEventListeners = {};
+
+      // Restore inline event handlers
+      restoreInlineEventHandlers();
+
+      // Add selection change listener for text mode
+      document.addEventListener("selectionchange", handleSelectionChange);
+
+      // Add link prevention
+      document.addEventListener("click", preventDefaultForLinks, true);
+    }
+
     // Update the indicator
     const indicator = document.getElementById("highlight-mode-indicator");
     if (indicator) {
@@ -311,6 +378,7 @@ function disableHighlightingMode() {
   document.removeEventListener("mouseup", handleMouseUp, true);
   document.removeEventListener("click", handleClick, true);
   document.removeEventListener("selectionchange", handleSelectionChange);
+  document.removeEventListener("click", preventDefaultForLinks, true);
 
   // Remove all the event handlers we added
   Object.keys(originalEventListeners).forEach((eventType) => {
